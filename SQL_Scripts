@@ -1,0 +1,27 @@
+---single array formatting into table in bigquery: 
+
+
+
+
+
+
+
+
+
+
+---multiple arrays formatting into table in bigquery: 
+
+with temp as (    
+              select program,course_run_code,split(replace(component_records,course_run_code||':',''),',') as components,
+                     split(component_start_date,',') as component_start_date,
+                     split(component_end_date,',') as component_end_date
+              from `table_1`
+              )   
+
+select program,course_run_code,components, component_start_date,component_end_date
+from temp,
+unnest(components) as components with offset
+join unnest(component_start_date) AS component_start_date with offset
+using(offset)
+join unnest(component_end_date) AS component_end_date with offset
+using(offset)

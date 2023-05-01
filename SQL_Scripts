@@ -1,16 +1,32 @@
----single array formatting into table in bigquery: 
+###single array formatting into table in bigquery: 
+---sample code
+with temp as (select column1, split(column2,',') as column2 from table)
+
+select column1, column2 from temp 
+cross join unnest(temp.column2) as column2 
 
 
+###multiple arrays formatting into table in bigquery: 
+---sample code
+with temp as 
+            (select column1, 
+                    split(column2,',') as column2,
+                    split(column3,',') as column3,
+                    split(column3,',') as column4
+             from table)
+             
+select column1,
+       column2,
+       column3, 
+       column4
+from temp 
+unnest(column2) as column2 with offset
+join unnest(column3) as column3 with offset
+using(offset)
+join unnest(column4) as column4 with offset
+using(offset)
 
-
-
-
-
-
-
-
----multiple arrays formatting into table in bigquery: 
-
+---example
 with temp as (    
               select program,course_run_code,split(replace(component_records,course_run_code||':',''),',') as components,
                      split(component_start_date,',') as component_start_date,
